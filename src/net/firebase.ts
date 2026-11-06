@@ -50,11 +50,16 @@ export async function initFirebase(): Promise<FirebaseHandles> {
   if (cached) return cached;
   if (!isFirebaseConfigured()) throw new Error('Firebase is not configured.');
   const cfg = getFirebaseConfig();
-  const [{ initializeApp }, authMod, dbMod] = await Promise.all([
-    import('firebase/app'),
-    import('firebase/auth'),
-    import('firebase/database'),
+  // The SDK loads from Google's official CDN at runtime instead of being
+  // bundled: this keeps the GitHub Pages build to one small JS file and the
+  // SDK is only fetched when a user actually goes online.
+  const CDN = 'https://www.gstatic.com/firebasejs/10.12.2';
+  const [appMod, authMod, dbMod] = await Promise.all([
+    import(/* @vite-ignore */ `${CDN}/firebase-app.js`),
+    import(/* @vite-ignore */ `${CDN}/firebase-auth.js`),
+    import(/* @vite-ignore */ `${CDN}/firebase-database.js`),
   ]);
+  const { initializeApp } = appMod;
   const app = initializeApp(cfg);
   const auth = authMod.getAuth(app);
   const db = dbMod.getDatabase(app);
