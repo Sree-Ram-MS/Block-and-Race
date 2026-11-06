@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Barricade — redirecting…</title>
+<script>
+  // GitHub Pages SPA fallback: bounce unknown paths back to the app,
+  // preserving any room id in the path as a hash route (#/room/<id>).
+  (function () {
+    var parts = location.pathname.split('/').filter(Boolean);
+    var roomIdx = parts.indexOf('room');
+    var base = '/Block-and-Race/';
+    if (roomIdx >= 0 && parts[roomIdx + 1]) {
+      location.replace(base + '#/room/' + parts[roomIdx + 1] + location.search);
+    } else {
+      location.replace(base + location.search + location.hash);
+    }
+  })();
+</script>
+</head>
+<body>Redirecting to <a href="/Block-and-Race/">Barricade</a>…</body>
+</html>
