@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barricade — Race to the Other Side</title>
+<meta name="description" content="Barricade: the 2-player Quoridor-style strategy duel. Race your pawn across a 9x9 board, place walls, never fully trap. Local, vs computer, or online with a friend.">
+<link rel="icon" href="/Block-and-Race/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">🧱 BARRICADE</div>
+  <div class="tagline">Race to the other side — and wall the way back.</div>
+  <div class="online-pill" id="onlinePill" title="Players online">● <span id="onlineCount">–</span> online</div>
+</header>
+
+<main class="layout">
+  <section class="board-wrap" aria-label="Game board">
+    <div class="goal-label" id="topGoal">▲ YOUR GOAL ROW — reach any square here</div>
+    <div id="board"></div>
+    <div class="goal-label" id="bottomGoal">▼ YOUR HOME ROW</div>
+  </section>
+
+  <aside class="panel">
+    <div id="turnBanner" class="turn-banner">Loading…</div>
+
+    <div class="row">
+      <button id="moveModeBtn" class="btn primary">♟ Move pawn</button>
+      <button id="wallModeBtn" class="btn">🧱 Place wall</button>
+      <button id="rotateBtn" class="btn ghost">↻ Rotate (R)</button>
+    </div>
+    <p id="hint" class="hint"></p>
+    <label class="check"><input type="checkbox" id="showPath" checked> Show shortest path for player to move</label>
+
+    <div id="players" class="players"></div>
+
+    <div class="card">
+      <div class="card-title">🎮 Game</div>
+      <label>Time control
+        <select id="tcSelect">
+          <option value="1+0">1+0 · bullet</option>
+          <option value="1+3">1+3</option>
+          <option value="3+0">3+0 · blitz</option>
+          <option value="3+2">3+2</option>
+          <option value="5+3" selected>5+3</option>
+          <option value="10+0">10+0 · rapid</option>
+          <option value="15+10">15+10</option>
+        </select>
+      </label>
+      <div class="row">
+        <button id="localBtn" class="btn">2P — same device</button>
+        <button id="aiBtn" class="btn">Vs computer</button>
+        <select id="aiLevel" title="Computer strength">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="newGameBtn" class="btn primary">New game</button>
+        <button id="resignBtn" class="btn danger">Resign</button>
+        <button id="rematchBtn" class="btn ghost">Rematch</button>
+      </div>
+      <p class="hint" id="modeStatus">Mode: local hot-seat. The board flips each turn so the player to move is at the bottom.</p>
+    </div>
+
+    <div class="card" id="onlineCard">
+      <div class="card-title">🌐 Online — play a friend / lobby</div>
+      <div id="firebaseWarning" class="warn" hidden>
+        <b>Firebase not configured</b> — add <code>VITE_FIREBASE_*</code> secrets / <code>.env</code>
+        (see README). Local and computer play work fully without it.
+      </div>
+      <label>Your name <input id="onlineName" type="text" maxlength="20"></label>
+      <div class="row">
+        <button id="createRoomBtn" class="btn primary">Create room</button>
+        <button id="copyLinkBtn" class="btn ghost" disabled>Copy invite link</button>
+        <button id="leaveRoomBtn" class="btn ghost" disabled>Leave room</button>
+      </div>
+      <label>Room code / id <input id="roomInput" type="text" placeholder="e.g. abcd2345"></label>
+      <div class="row">
+        <button id="joinRoomBtn" class="btn">Join room</button>
+        <button id="watchRoomBtn" class="btn ghost">Watch (TV)</button>
+      </div>
+      <p id="onlineStatus" class="hint">Not in an online room.</p>
+      <div class="card-title small">Open rooms (lobby)</div>
+      <ul id="lobbyList" class="lobby"><li class="hint">—</li></ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Moves</div>
+      <ol id="moveList" class="moves"></ol>
+    </div>
+
+    <details class="card">
+      <summary>📜 Rules</summary>
+      <ul class="rules">
+        <li><b>Goal:</b> be first to land on <b>any square of the far row</b>.</li>
+        <li>Each turn, exactly one action: move your pawn <b>one square</b> up/down/left/right — <b>or</b> place one wall. No passing.</li>
+        <li>A <b>wall is 2 squares long</b>, sits in the grooves (horizontal/vertical), blocks <b>both</b> pawns, and is permanent. You have <b>10</b>.</li>
+        <li>Walls <b>cannot overlap or cross</b>, and a placement is illegal if it leaves <b>either pawn with no route</b> to its goal (checked by BFS).</li>
+        <li><b>Face-to-face:</b> jump straight over your opponent. If a wall or the edge is behind them, step diagonally to either side.</li>
+        <li>Win by reaching the far row, or if your opponent resigns or runs out of time.</li>
+      </ul>
+    </details>
+  </aside>
+</main>
+
+<footer class="footer">An original implementation of the Barricade.gg game concept — Vite + TypeScript, hosted on GitHub Pages with Firebase online play. Not affiliated with barricade.gg.</footer>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
